@@ -3,6 +3,7 @@ import cors from 'cors';
 import mongoose from 'mongoose'; 
 import dotenv from 'dotenv';
 dotenv.config();
+import TvShow from './models/TvShow.js'; 
 
 const app = express();
 app.use(express.json());
@@ -37,24 +38,25 @@ app.get('/tv-shows', (req, res) => {
 });
 
 // Add a new TV show
-app.post('/tv-shows', (req, res) => {
+app.post('/tv-shows', async(req, res) => {
     const { title, time, channel, thumbnail } = req.body;
-    const newShow = {
+    
+    const newTvShow = new TvShow({
         title,
         time,
         channel,
         thumbnail
-    };
-    TV_SHOWS.push(newShow);
+    });
+    const savedTvShow = await newTvShow.save();
 
     return res.status(201).json({
         success: true,
-        data: newShow,
+        data: savedTvShow,
         message: 'TV show added successfully'
     });
 });
 
-const PORT = 5002;
+const PORT = process.env.PORT || 5002;
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
